@@ -70,12 +70,14 @@ class GoBangUI(QPlainTextEdit):
         # 绘制棋盘
         self.draw_checkbox(qp)
         # 绘制棋子
-        for i in range(len(self._pos)):
-            # print(self._pos[i])
-            # print(self._flag[i])
-            qp.setBrush(brush_list[self._flag[i]])  # 设置棋子的背景色（brush）
-            qp.setPen(pen_list[self._flag[i]])  # 设置画笔的颜色
-            qp.drawEllipse(self._pos[i][0] * 50 - radius / 2, self._pos[i][1] * 50 - radius / 2, radius, radius)
+        length = len(self._pos)
+        if length:
+            for i in range(length):
+                # print(self._pos[i])
+                # print(self._flag[i])
+                qp.setBrush(brush_list[self._flag[i]])  # 设置棋子的背景色（brush）
+                qp.setPen(pen_list[self._flag[i]])  # 设置画笔的颜色
+                qp.drawEllipse(self._pos[i][0] * 50 - radius / 2, self._pos[i][1] * 50 - radius / 2, radius, radius)
 
     # 绘制棋盘
     def draw_checkbox(self, qp):
@@ -101,11 +103,13 @@ class GoBangUI(QPlainTextEdit):
         choice = QMessageBox.information(self, title, content, QMessageBox.Yes | QMessageBox.No)
         if choice == QMessageBox.Yes:
             print("==================重新开始游戏!==================\n")
-            self.__init__()  # 重新初始化棋盘和数组
+            self._pos = []  # 存放棋子坐标的列表
+            self.flag = 1  # 表示落子时的棋手身份(黑方白方)
+            self._flag = []  # 存放棋手身份的列表
+            self.game = GoBangGame()  # 初始化游戏
         elif choice == QMessageBox.No:
             print("退出游戏。")
             self.close()  # 关闭窗体
-            pass
 
 
 if __name__ == '__main__':
