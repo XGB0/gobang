@@ -1,7 +1,8 @@
+#!encoding:utf-8
 import numpy as np
 
 
-class WZQ(object):
+class GoBangGame(object):
     def __init__(self):
         # 棋盘（15x15范围、初始值全为0的二维nparray数组。）
         # 白方落子后，值变为1
@@ -95,21 +96,45 @@ class WZQ(object):
                     break
             # print("count=", count)
             # print()
-            if count == 5:
-                self.GAME_ENDING = 1
-                print("白方胜利！")
-                # 后续可以改成return 1 和return 2，来区别白黑方胜利
+            # if count == 5:
+            #     self.GAME_ENDING = 1
+            #     print("白方胜利！")
+            #     # 后续可以改成return 1 和return 2，来区别白黑方胜利
+            #     return 1
+            # elif count == -5:
+            #     self.GAME_ENDING = 1
+            #     print("黑方胜利！")
+            #     return 2
+            if count == 5 or count == -5:
+                self.GAME_ENDING = count
                 return True
-            elif count == -5:
-                self.GAME_ENDING = 1
-                print("黑方胜利！")
-                return True
+
+    def zuizhong(self, flag, x, y):
+        # 因为ui传过来的x y范围为[1, 15]，而逻辑层这里的x, y 范围为[0, 14]
+        # 所以要-1
+        x, y = x-1, y-1
+        try:
+            if x < 15 and y < 15:
+                if self.luozi(flag, x, y):
+                    for list_tmp in self.four_list(x, y):
+                        # print(list_tmp)
+                        if self.panduan(list_tmp):
+                            # print(self.checkerboard)
+                            print(np.transpose(self.checkerboard))
+                            return self.GAME_ENDING
+                    return True
+                else:
+                    print("落子失败，请重新输入！")
+            else:
+                print("超出棋盘范围，请重新输入！")
+        except Exception as e:
+            print(e)
 
 
 if __name__ == '__main__':
     # 黑方先手。所以flag初始为1
     flag = 1
-    w = WZQ()
+    w = GoBangGame()
     while w.GAME_ENDING == 0:
         if flag == 1:
             print("黑方落子：")
@@ -117,18 +142,9 @@ if __name__ == '__main__':
             print("白方落子：")
         x, y = w.get_qizi()
         if x > 0 and y > 0:
-            if x < 15 and y < 15:
-                if w.luozi(flag, x, y):
-                    for list_tmp in w.four_list(x, y):
-                        # print(list_tmp)
-                        if w.panduan(list_tmp):
-                            print(w.checkerboard)
-                    # flag 1、0交替变换，直到游戏结束
-                    flag = (flag+1) % 2
-                else:
-                    print("落子失败，请重新输入！")
-            else:
-                print("超出棋盘范围，请重新输入！")
+            w.zuizhong(flag, x, y)
+            # flag 1、0交替变换，直到游戏结束
+            flag = (flag + 1) % 2
         else:
             print("输入不为数字，请重新输入！")
 
